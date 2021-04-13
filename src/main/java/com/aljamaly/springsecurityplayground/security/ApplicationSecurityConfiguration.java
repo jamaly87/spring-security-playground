@@ -28,8 +28,8 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/","index","/css/*","/js/*")
-                .permitAll()
+                .antMatchers("/","index","/css/*","/js/*").permitAll()
+                .antMatchers("/api/**").hasRole(STUDENT.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -42,7 +42,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
         UserDetails hamzaJamalyUser = User.builder()
                 .username("hamzajamaly")
                 .password(passwordEncoder.encode("password"))
-                .roles(STUDENT.name()) //ROLE_STUDNET
+                .roles(STUDENT.name()) //We assign roles to implement role based authentication
                 .build();
 
         UserDetails minaUser = User.builder()
@@ -51,7 +51,13 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .roles(ADMIN.name()) //ROLE_ADMIN
                 .build();
 
-        return new InMemoryUserDetailsManager(hamzaJamalyUser,minaUser);
+        UserDetails tomUser = User.builder()
+                .username("tomjones")
+                .password("password")
+                .roles(ADMINTRAINEE.name()) //ROLE_ADMIN TRAINEE
+                .build();
+
+        return new InMemoryUserDetailsManager(hamzaJamalyUser,minaUser, tomUser);
 
     }
 }
